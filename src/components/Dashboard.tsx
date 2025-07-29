@@ -236,36 +236,30 @@ export function Dashboard() {
       default:
         return (
           <>
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {stats.map((stat, index) => (
-                <div key={index} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-400 text-sm font-medium">{stat.title}</p>
-                      <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
+            <div className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <Shield className="h-24 w-24 text-blue-400 mx-auto mb-6" />
+                <h2 className="text-3xl font-bold text-white mb-4">
+                  Cybersecurity Operations Center
+                </h2>
+                <p className="text-gray-400 text-lg mb-8">
+                  Select a section from the sidebar to view detailed information
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {stats.map((stat, index) => (
+                    <div key={index} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-gray-400 text-sm font-medium">{stat.title}</p>
+                          <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
+                        </div>
+                        <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                          <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                        </div>
+                      </div>
                     </div>
-                    <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            {/* Main Grid */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              {/* Left Column - Threat Map and Network Monitor */}
-              <div className="xl:col-span-2 space-y-6">
-                <ThreatMap incidents={incidents} />
-                <NetworkMonitor networkTraffic={networkTraffic} />
-              </div>
-
-              {/* Right Column - Alerts, System Status, and Incidents */}
-              <div className="space-y-6">
-                <AlertPanel alerts={alerts} />
-                <SystemStatus systems={systemStatus} />
-                <IncidentList incidents={incidents.slice(0, 5)} />
               </div>
             </div>
           </>
