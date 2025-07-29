@@ -5,13 +5,10 @@ import { IncidentList } from './IncidentList';
 import { NetworkMonitor } from './NetworkMonitor';
 import { SystemStatus } from './SystemStatus';
 import { AlertPanel } from './AlertPanel';
-import { UserProfile } from './UserProfile';
 import { useIncidentData } from '../hooks/useIncidentData';
-import { useAuth } from '../hooks/useAuth';
 
 export function Dashboard() {
   const { incidents, networkTraffic, systemStatus, alerts, isMonitoring, toggleMonitoring } = useIncidentData();
-  const { user, hasPermission } = useAuth();
 
   const criticalIncidents = incidents.filter(i => i.severity === 'critical').length;
   const highIncidents = incidents.filter(i => i.severity === 'high').length;
@@ -58,11 +55,9 @@ export function Dashboard() {
             <Shield className="h-8 w-8 text-blue-400" />
             <div>
               <h1 className="text-2xl font-bold text-white">CyberGuard SOC</h1>
-              {user && (
-                <p className="text-sm text-gray-400">
-                  Welcome back, {user.firstName}
-                </p>
-              )}
+              <p className="text-sm text-gray-400">
+                Security Operations Center
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -72,19 +67,16 @@ export function Dashboard() {
                 {isMonitoring ? 'Monitoring Active' : 'Monitoring Paused'}
               </span>
             </div>
-            {hasPermission('manage_systems') && (
-              <button
-                onClick={toggleMonitoring}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isMonitoring 
-                    ? 'bg-red-600 hover:bg-red-700 text-white' 
-                    : 'bg-green-600 hover:bg-green-700 text-white'
-                }`}
-              >
-                {isMonitoring ? 'Pause' : 'Resume'} Monitoring
-              </button>
-            )}
-            <UserProfile />
+            <button
+              onClick={toggleMonitoring}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                isMonitoring 
+                  ? 'bg-red-600 hover:bg-red-700 text-white' 
+                  : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
+            >
+              {isMonitoring ? 'Pause' : 'Resume'} Monitoring
+            </button>
           </div>
         </div>
       </header>
@@ -111,15 +103,15 @@ export function Dashboard() {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - Threat Map and Network Monitor */}
           <div className="xl:col-span-2 space-y-6">
-            {hasPermission('view_incidents') && <ThreatMap incidents={incidents} />}
-            {hasPermission('view_systems') && <NetworkMonitor networkTraffic={networkTraffic} />}
+            <ThreatMap incidents={incidents} />
+            <NetworkMonitor networkTraffic={networkTraffic} />
           </div>
 
           {/* Right Column - Alerts, System Status, and Incidents */}
           <div className="space-y-6">
-            {hasPermission('view_alerts') && <AlertPanel alerts={alerts} />}
-            {hasPermission('view_systems') && <SystemStatus systems={systemStatus} />}
-            {hasPermission('view_incidents') && <IncidentList incidents={incidents.slice(0, 5)} />}
+            <AlertPanel alerts={alerts} />
+            <SystemStatus systems={systemStatus} />
+            <IncidentList incidents={incidents.slice(0, 5)} />
           </div>
         </div>
       </div>
