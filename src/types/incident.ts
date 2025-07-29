@@ -33,4 +33,34 @@ export interface Alert {
   message: string;
   type: 'info' | 'warning' | 'error' | 'critical';
   acknowledged: boolean;
+  correlationId?: string;
+  sourceSystem: string;
+  riskScore: number;
+  isDuplicate: boolean;
+  originalAlertId?: string;
+  relatedAlerts: string[];
+}
+
+export interface ThreatDetection {
+  id: string;
+  timestamp: Date;
+  threatType: 'behavioral_anomaly' | 'signature_match' | 'ml_detection' | 'correlation_rule';
+  confidence: number;
+  riskScore: number;
+  indicators: string[];
+  affectedAssets: string[];
+  mitreTactics: string[];
+  description: string;
+}
+
+export interface AnomalyDetection {
+  id: string;
+  timestamp: Date;
+  anomalyType: 'traffic_spike' | 'unusual_login' | 'data_exfiltration' | 'privilege_escalation';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  baseline: number;
+  observed: number;
+  deviation: number;
+  source: string;
+  description: string;
 }

@@ -8,7 +8,8 @@ import {
   FileText, 
   ChevronLeft, 
   ChevronRight,
-  BarChart3
+  BarChart3,
+  Brain
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -81,6 +82,13 @@ export function Sidebar({
       icon: FileText,
       count: stats.recentIncidents,
       color: 'text-purple-400'
+    },
+    {
+      id: 'detection',
+      label: 'Threat Detection',
+      icon: Brain,
+      count: null,
+      color: 'text-cyan-400'
     }
   ];
 

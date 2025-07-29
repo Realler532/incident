@@ -6,10 +6,20 @@ import { IncidentList } from './IncidentList';
 import { NetworkMonitor } from './NetworkMonitor';
 import { SystemStatus } from './SystemStatus';
 import { AlertPanel } from './AlertPanel';
+import { ThreatDetectionPanel } from './ThreatDetectionPanel';
 import { useIncidentData } from '../hooks/useIncidentData';
 
 export function Dashboard() {
-  const { incidents, networkTraffic, systemStatus, alerts, isMonitoring, toggleMonitoring } = useIncidentData();
+  const { 
+    incidents, 
+    networkTraffic, 
+    systemStatus, 
+    alerts, 
+    threatDetections, 
+    anomalies, 
+    isMonitoring, 
+    toggleMonitoring 
+  } = useIncidentData();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [activeSection, setActiveSection] = React.useState('overview');
 
@@ -18,18 +28,20 @@ export function Dashboard() {
   const activeIncidents = incidents.filter(i => i.status !== 'resolved').length;
   const onlineSystemsCount = systemStatus.filter(s => s.status === 'online').length;
   const unacknowledgedAlerts = alerts.filter(a => !a.acknowledged).length;
+  const highConfidenceThreats = threatDetections.filter(t => t.confidence > 80).length;
+  const criticalAnomalies = anomalies.filter(a => a.severity === 'critical').length;
 
   const stats = [
     {
       title: 'Active Threats',
-      value: activeIncidents,
+      value: activeIncidents + highConfidenceThreats,
       icon: Shield,
       color: 'text-red-400',
       bgColor: 'bg-red-500/20'
     },
     {
       title: 'Critical Incidents',
-      value: criticalIncidents,
+      value: criticalIncidents + criticalAnomalies,
       icon: AlertTriangle,
       color: 'text-orange-400',
       bgColor: 'bg-orange-500/20'
@@ -51,11 +63,11 @@ export function Dashboard() {
   ];
 
   const sidebarStats = {
-    activeThreats: activeIncidents,
-    criticalIncidents,
+    activeThreats: activeIncidents + highConfidenceThreats,
+    criticalIncidents: criticalIncidents + criticalAnomalies,
     networkTraffic: networkTraffic.length,
     systemsOnline: `${onlineSystemsCount}/${systemStatus.length}`,
-    activeAlerts: unacknowledgedAlerts,
+    activeAlerts: alerts.filter(a => !a.acknowledged && !a.isDuplicate).length,
     recentIncidents: incidents.length
   };
 
@@ -73,6 +85,8 @@ export function Dashboard() {
         return 'Active Alerts';
       case 'incidents':
         return 'Recent Incidents';
+      case 'detection':
+        return 'Threat Detection & Anomalies';
       default:
         return 'Dashboard Overview';
     }
@@ -233,6 +247,8 @@ export function Dashboard() {
             <IncidentList incidents={incidents} />
           </div>
         );
+      case 'detection':
+        return <ThreatDetectionPanel threatDetections={threatDetections} anomalies={anomalies} />;
       default:
         return (
           <>
@@ -265,13 +281,43 @@ export function Dashboard() {
                 ))}
               </div>
 
+              {/* Advanced Detection Summary */}
+              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 mb-6">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                  <Shield className="h-5 w-5 text-blue-400 mr-2" />
+                  Advanced Detection Summary
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <div className="text-red-400 text-xl font-bold">{highConfidenceThreats}</div>
+                    <div className="text-gray-400 text-sm">High Confidence Threats</div>
+                  </div>
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <div className="text-purple-400 text-xl font-bold">{anomalies.length}</div>
+                    <div className="text-gray-400 text-sm">Anomalies Detected</div>
+                  </div>
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <div className="text-blue-400 text-xl font-bold">
+                      {alerts.filter(a => a.correlationId).length}
+                    </div>
+                    <div className="text-gray-400 text-sm">Correlated Alerts</div>
+                  </div>
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <div className="text-green-400 text-xl font-bold">
+                      {alerts.filter(a => a.isDuplicate).length}
+                    </div>
+                    <div className="text-gray-400 text-sm">Deduplicated</div>
+                  </div>
+                </div>
+              </div>
+
               {/* Global Threat Map */}
               <ThreatMap incidents={incidents} />
 
               {/* Navigation Hint */}
               <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 text-center">
                 <p className="text-gray-400">
-                  Use the sidebar navigation to access detailed monitoring sections
+                  Use the sidebar navigation to access detailed monitoring sections including advanced threat detection
                 </p>
               </div>
             </div>
