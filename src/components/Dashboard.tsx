@@ -7,6 +7,7 @@ import { NetworkMonitor } from './NetworkMonitor';
 import { SystemStatus } from './SystemStatus';
 import { AlertPanel } from './AlertPanel';
 import { ThreatDetectionPanel } from './ThreatDetectionPanel';
+import { SystemAlertPanel } from './SystemAlertPanel';
 import { useIncidentData } from '../hooks/useIncidentData';
 
 export function Dashboard() {
@@ -249,6 +250,8 @@ export function Dashboard() {
         );
       case 'detection':
         return <ThreatDetectionPanel threatDetections={threatDetections} anomalies={anomalies} />;
+      case 'email-alerts':
+        return <SystemAlertPanel />;
       default:
         return (
           <>

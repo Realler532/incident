@@ -9,7 +9,8 @@ import {
   ChevronLeft, 
   ChevronRight,
   BarChart3,
-  Brain
+  Brain,
+  Mail
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -89,6 +90,13 @@ export function Sidebar({
       icon: Brain,
       count: null,
       color: 'text-cyan-400'
+    },
+    {
+      id: 'email-alerts',
+      label: 'Email Alert System',
+      icon: Mail,
+      count: null,
+      color: 'text-indigo-400'
     }
   ];
 
