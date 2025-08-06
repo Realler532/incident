@@ -52,7 +52,7 @@ export function SystemAlertPanel() {
             Email Alert System Configuration
           </h2>
           <div className="flex items-center space-x-2">
-            <div className={`w-3 h-3 rounded-full ${isMonitoring ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+            System & Security Alert Settings
             <span className="text-sm text-gray-300">
               {isMonitoring ? 'Monitoring Active' : 'Monitoring Inactive'}
             </span>
@@ -110,6 +110,54 @@ export function SystemAlertPanel() {
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                   placeholder="your-app-password"
                 />
+              </div>
+            </div>
+            
+            {/* Security Alert Settings */}
+            <div className="mt-4 pt-4 border-t border-gray-600">
+              <h4 className="text-md font-medium text-white mb-3">Cybersecurity Alert Thresholds</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Failed Login Threshold</label>
+                  <input
+                    type="number"
+                    defaultValue="5"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                    min="1"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Network Scan Threshold</label>
+                  <input
+                    type="number"
+                    defaultValue="10"
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                    min="1"
+                  />
+                </div>
+              </div>
+              
+              <div className="mt-3">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="rounded bg-gray-700 border-gray-600 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-300">Enable threat detection email alerts</span>
+                </label>
+              </div>
+              
+              <div className="mt-2">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="rounded bg-gray-700 border-gray-600 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-300">Send alerts for critical incidents only</span>
+                </label>
               </div>
             </div>
           </div>
@@ -225,6 +273,21 @@ export function SystemAlertPanel() {
           >
             {isMonitoring ? <Square className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             <span>{isMonitoring ? 'Stop Monitoring' : 'Start Monitoring'}</span>
+          </button>
+          
+          <button
+            onClick={() => {
+              // Test threat alert
+              setTestResult('sending');
+              setTimeout(() => {
+                setTestResult('success');
+                setTimeout(() => setTestResult(null), 3000);
+              }, 2000);
+            }}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center space-x-2"
+          >
+            <AlertTriangle className="h-4 w-4" />
+            <span>Test Threat Alert</span>
           </button>
         </div>
 

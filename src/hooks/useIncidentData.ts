@@ -10,6 +10,30 @@ import {
   correlateAlerts
 } from '../utils/dataSimulator';
 
+// Email alert system integration
+const sendEmailAlert = async (alertData: any) => {
+  try {
+    // In a real implementation, this would call a backend API
+    // that triggers the Python email alert system
+    console.log('Sending email alert:', alertData);
+    
+    // Simulate API call to Python backend
+    const response = await fetch('/api/send-threat-alert', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(alertData),
+    });
+    
+    if (response.ok) {
+      console.log('Email alert sent successfully');
+    }
+  } catch (error) {
+    console.error('Failed to send email alert:', error);
+  }
+};
+
 export function useIncidentData() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [networkTraffic, setNetworkTraffic] = useState<NetworkTraffic[]>([]);
@@ -49,6 +73,18 @@ export function useIncidentData() {
         if (newIncident.severity === 'high' || newIncident.severity === 'critical') {
           const alert = generateAlert();
           setAlerts(prev => [alert, ...prev].slice(0, 20));
+          
+          // Send email alert for critical incidents
+          if (newIncident.severity === 'critical') {
+            sendEmailAlert({
+              type: newIncident.type,
+              severity: newIncident.severity,
+              description: newIncident.description,
+              source_ip: newIncident.source,
+              target: newIncident.target,
+              timestamp: newIncident.timestamp.toISOString()
+            });
+          }
         }
       }
       
@@ -74,6 +110,20 @@ export function useIncidentData() {
             const newAlerts = [alert, ...prev].slice(0, 20);
             return correlateAlerts(newAlerts);
           });
+          
+          // Send email alert for high-risk threats
+          if (newThreat.riskScore > 80) {
+            sendEmailAlert({
+              type: 'advanced_threat_detection',
+              severity: newThreat.riskScore > 90 ? 'critical' : 'high',
+              description: newThreat.description,
+              source_ip: 'ML_Detection_Engine',
+              confidence: newThreat.confidence,
+              risk_score: newThreat.riskScore,
+              indicators: newThreat.indicators,
+              mitre_tactics: newThreat.mitreTactics
+            });
+          }
         }
       }
       
@@ -98,6 +148,19 @@ export function useIncidentData() {
           setAlerts(prev => {
             const newAlerts = [alert, ...prev].slice(0, 20);
             return correlateAlerts(newAlerts);
+          });
+        }
+        
+        // Send email alert for critical anomalies
+        if (newAnomaly.severity === 'critical' || newAnomaly.deviation > 500) {
+          sendEmailAlert({
+            type: 'anomaly_detection',
+            severity: newAnomaly.severity,
+            description: newAnomaly.description,
+            source_ip: newAnomaly.source,
+            deviation: newAnomaly.deviation,
+            baseline: newAnomaly.baseline,
+            observed: newAnomaly.observed
           });
         }
       }
